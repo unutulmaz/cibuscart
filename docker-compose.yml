@@ -2,10 +2,16 @@ version: "2"
 services:
   es:
     image: elasticsearch:2.3
-  web:
+  server:
     image: thelusina/foodtrucks-web
-    command: python app.py
+    command: python manage.py runserver
     ports:
       - "5000:5000"
     volumes:
       - .:/code
+
+  client:
+    image: thelusina/cibuscart
+    command: npm run start
+    ports:
+      - "3000:3000"
