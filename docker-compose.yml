@@ -3,7 +3,7 @@ services:
   es:
     image: elasticsearch:2.3
   web:
-    image: prakhar1989/foodtrucks-web
+    image: thelusina/foodtrucks-web
     command: python app.py
     ports:
       - "5000:5000"
