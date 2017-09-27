@@ -8,6 +8,7 @@ es = Elasticsearch(host='es')
 
 app = Flask(__name__)
 
+
 def load_data_in_es():
     """ creates an index in elasticsearch """
     url = "http://data.sfgov.org/resource/rqzj-sfat.json"
@@ -17,6 +18,7 @@ def load_data_in_es():
     for id, truck in enumerate(data):
         res = es.index(index="sfdata", doc_type="truck", id=id, body=truck)
     print "Total trucks loaded: ", len(data)
+
 
 def safe_check_index(index, retry=3):
     """ connect to ES with retry """
@@ -29,7 +31,7 @@ def safe_check_index(index, retry=3):
     except exceptions.ConnectionError as e:
         print "Unable to connect to ES. Retrying in 5 secs..."
         time.sleep(5)
-        safe_check_index(index, retry-1)
+        safe_check_index(index, retry - 1)
 
 
 def check_and_load_index():
@@ -38,12 +40,14 @@ def check_and_load_index():
         print "Index not found..."
         load_data_in_es()
 
+
 ###########
 ### APP ###
 ###########
 @app.route('/')
 def index():
     return render_template('index.html')
+
 
 @app.route('/debug')
 def test_es():
@@ -57,9 +61,11 @@ def test_es():
         resp["msg"] = "Unable to reach ES"
     return jsonify(resp)
 
+
 def format_fooditems(string):
     items = [x.strip().lower() for x in string.split(":")]
     return items[1:] if items[0].find("cold truck") > -1 else items
+
 
 @app.route('/search')
 def search():
@@ -71,11 +77,11 @@ def search():
         })
     try:
         res = es.search(
-                index="sfdata",
-                body={
-                    "query": {"match": {"fooditems": key}},
-                    "size": 750 # max document size
-              })
+            index="sfdata",
+            body={
+                "query": {"match": {"fooditems": key}},
+                "size": 750  # max document size
+            })
     except Exception as e:
         return jsonify({
             "status": "failure",
@@ -89,10 +95,10 @@ def search():
         applicant = r["_source"]["applicant"]
         if "location" in r["_source"]:
             truck = {
-                "hours"    : r["_source"].get("dayshours", "NA"),
-                "schedule" : r["_source"].get("schedule", "NA"),
-                "address"  : r["_source"].get("address", "NA"),
-                "location" : r["_source"]["location"]
+                "hours": r["_source"].get("dayshours", "NA"),
+                "schedule": r["_source"].get("schedule", "NA"),
+                "address": r["_source"].get("address", "NA"),
+                "location": r["_source"]["location"]
             }
             fooditems[applicant] = r["_source"]["fooditems"]
             temp[applicant].append(truck)
@@ -116,7 +122,8 @@ def search():
         "status": "success"
     })
 
+
 if __name__ == "__main__":
     check_and_load_index()
-    #app.run(debug=True) # for dev
-    app.run(host='0.0.0.0', port=5000) # for prod
+    # app.run(debug=True) # for dev
+    app.run(host='0.0.0.0', port=5000)  # for prod
