@@ -1,23 +1,18 @@
-FROM ubuntu:14.04
-MAINTAINER Brian Lusina <lusinabrian@gmail.com>
+FROM python:3.6.1-onbuild
 
-# install system-wide deps for python and node
-RUN apt-get -yqq update
-RUN apt-get -yqq install python-pip python-dev
-RUN apt-get -yqq install nodejs npm
-RUN ln -s /usr/bin/nodejs /usr/bin/node
+MAINTAINER Brian Lusina "lusinabrian@gmail.com"
 
-# copy our application code
-ADD flask-app /opt/flask-app
-WORKDIR /opt/flask-app
+# We copy just the requirements.txt first to leverage Docker cache
+COPY ./requirements.txt /app/requirements.txt
 
-# fetch app specific deps
-RUN npm install
-RUN npm run build
+WORKDIR /app
+
 RUN pip install -r requirements.txt
 
-# expose port
-EXPOSE 5000
+COPY . /app
 
-# start app
-CMD [ "python", "./app.py" ]
+## TODO: set other environment variables from .env file to docker container
+
+ENTRYPOINT [ "python" ]
+
+CMD [ "manage.py", "runserver" ]
