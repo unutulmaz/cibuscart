@@ -87,6 +87,7 @@ def app_request_handlers(app):
     database that is currently in use
     :param app: the current flask app
     """
+    # TODO: move implementation to background thread
     @app.before_first_request
     def load_data_in_es():
         cibus_search = CibusElasticSearch()
@@ -129,5 +130,7 @@ def register_app_blueprints(app_):
     """
 
     from app.mod_home import home
+    from app.mod_search import search_mod
 
     app_.register_blueprint(home)
+    app_.register_blueprint(search_mod)

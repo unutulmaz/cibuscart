@@ -1,8 +1,7 @@
 from . import home
-from flask import current_app
-from app import logger
+from flask import render_template
 
 
 @home.route("")
 def home():
-    return "Welcome home"
+    return render_template('index.html')
