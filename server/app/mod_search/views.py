@@ -3,7 +3,7 @@ from flask import jsonify, request
 from ..models import CibusElasticSearch, Elasticsearch as es
 
 
-@search_mod("")
+@search_mod.route("")
 def search_for_food_trucks():
     key = request.args.get('q')
     if not key:

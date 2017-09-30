@@ -6,14 +6,12 @@
 [Bb]in
 [Ii]nclude
 [Ll]ib
-__pycache__
 [Ll]ib64
 [Ll]ocal
 [Ss]cripts
 pyvenv.cfg
 .venv
 venv/
-
 pip-selfcheck.json
 ### Python template
 # Byte-compiled / optimized / DLL files

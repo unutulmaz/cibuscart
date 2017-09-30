@@ -16,8 +16,7 @@ app = create_app(os.getenv("FLASK_CONFIG") or "default")
 
 manager = Manager(app)
 migrate = Migrate(app, db, directory="migrations")
-server = Server(host="127.0.0.1", port=7000)
-public_server = Server(host="0.0.0.0", port=5000)
+server = Server(host="0.0.0.0", port=5000)
 
 
 def make_shell_context():
@@ -32,7 +31,6 @@ def make_shell_context():
 manager.add_command("shell", Shell(make_context=make_shell_context))
 manager.add_command("db", MigrateCommand)
 manager.add_command("runserver", server)
-manager.add_command("publicserver", public_server)
 
 cov = None
 if os.environ.get('FLASK_COVERAGE'):
@@ -114,9 +112,5 @@ def drop_db():
 
 
 if __name__ == "__main__":
-    try:
-        logger.info("Running on {}:{}".format(server.host, server.port))
-    except Exception as e:
-        logger.error("Server instance not used, using public server..., err {}".format(e))
-        logger.info("Running on {}:{}".format(public_server.host, public_server.port))
+    logger.info("Running on {}:{}".format(server.host, server.port))
     manager.run()

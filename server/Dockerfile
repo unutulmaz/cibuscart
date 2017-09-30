@@ -11,7 +11,7 @@ RUN pip install -r requirements.txt
 
 COPY . /app
 
-## TODO: set other environment variables from .env file to docker container
+EXPOSE 5000
 
 ENTRYPOINT [ "python" ]
 
