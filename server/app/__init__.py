@@ -2,19 +2,17 @@
 """
 This defines the application module that essentially creates a new flask app object
 """
-import jinja2
-import os
-from config import config, Config
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 import logging
 
-# initialize objects of flask extensions that will be used and then initialize the application
-# once the flask object has been created and initialized. 1 caveat for this is that when
-#  configuring Celery, the broker will remain constant for all configurations
+import jinja2
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+
+from config import config
+from .models import CibusElasticSearch
+
 db = SQLAlchemy()
-# mail = Mail()
-logger = logging.getLogger("CibusCart")
+logger = logging.getLogger("CibusCartLogger")
 
 
 class CibusCartApp(Flask):
@@ -89,6 +87,10 @@ def app_request_handlers(app):
     database that is currently in use
     :param app: the current flask app
     """
+    @app.before_first_request
+    def load_data_in_es():
+        cibus_search = CibusElasticSearch()
+        cibus_search.check_and_load_index()
 
 
 def app_logger_handler(app):
