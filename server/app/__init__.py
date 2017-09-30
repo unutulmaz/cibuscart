@@ -7,16 +7,17 @@ import os
 from config import config, Config
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+import logging
 
 # initialize objects of flask extensions that will be used and then initialize the application
 # once the flask object has been created and initialized. 1 caveat for this is that when
 #  configuring Celery, the broker will remain constant for all configurations
 db = SQLAlchemy()
 # mail = Mail()
+logger = logging.getLogger("CibusCart")
 
 
-# todo: change flask app name
-class MyFlaskApp(Flask):
+class CibusCartApp(Flask):
     """
     Custom application class subclassing Flask application. This is to ensure more modularity in
      terms of static files and templates. This way a module will have its own templates and the
@@ -59,7 +60,7 @@ def create_app(config_name):
     :return: a new WSGI Flask app
     :rtype: Flask
     """
-    app = MyFlaskApp()
+    app = CibusCartApp()
 
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
@@ -92,15 +93,21 @@ def app_request_handlers(app):
 
 def app_logger_handler(app):
     """
-    Will handle error logging for the application and will store the app log files in a file that can 
-    later be accessed.
+    Will handle error logging for the application and will store the app log files
+    in a filethat can later be accessed.
     :param app: current flask application
     """
+
+    if app.debug:
+        logging.basicConfig(level=logging.DEBUG)
+    else:
+        logging.basicConfig(level=logging.INFO)
 
 
 def error_handlers(app):
     """
-    Error handlers function that will initialize error handling templates for the entire application
+    Error handlers function that will initialize error handling templates for the entire
+     application
     :param app: the flask app
     """
 
@@ -113,9 +120,12 @@ def error_handlers(app):
         """
 
 
-def register_app_blueprints(app):
+def register_app_blueprints(app_):
     """
     Registers the application blueprints
     :param app: the current flask app
     """
-    
+
+    from app.mod_home import home
+
+    app_.register_blueprint(home)

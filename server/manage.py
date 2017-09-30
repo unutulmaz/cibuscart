@@ -1,10 +1,10 @@
 import os
-import better_exceptions
-from flask_migrate import Migrate, MigrateCommand, upgrade
-from flask_script import Manager, Shell, Server
-from app import create_app, db
+
 import alembic
 import alembic.config
+from app import create_app, db, logger
+from flask_migrate import Migrate, MigrateCommand, upgrade
+from flask_script import Manager, Shell, Server
 
 # create the application with given configuration from environment
 app = create_app(os.getenv("FLASK_CONFIG") or "default")
@@ -104,37 +104,6 @@ def init_db(migration):
         db.session.commit()
         cfg = alembic.config.Config("app/migrations/alembic.ini")
         alembic.command.stamp(cfg, "head")
-        # todo: add default roles
-        # Role.add_default_roles()
-
-
-# todo: user commands
-@manager.option('-e', '--email', help='email address', required=True)
-@manager.option('-p', '--password', help='password', required=True)
-@manager.option('-a', '--admin', help='make user an admin user', action='store_true', default=None)
-def user_add(email, password, admin=False):
-    """add a user to the database"""
-    # if admin:
-    #     roles = ["Admin"]
-    # else:
-    #     roles = ["User"]
-    # User.register(
-    #     email=email,
-    #     password=password,
-    #     confirmed=True,
-    #     roles=roles
-    # )
-
-
-@manager.option('-e', '--email', help='email address', required=True)
-def user_del(email):
-    """delete a user from the database"""
-    # obj = User.find(email=email)
-    # if obj:
-    #     obj.delete()
-    #     print("Deleted")
-    # else:
-    #     print("User not found")
 
 
 @manager.command
@@ -145,4 +114,9 @@ def drop_db():
 
 
 if __name__ == "__main__":
+    try:
+        logger.info("Running on {}:{}".format(server.host, server.port))
+    except Exception as e:
+        logger.error("Server instance not used, using public server..., err {}".format(e))
+        logger.info("Running on {}:{}".format(public_server.host, public_server.port))
     manager.run()

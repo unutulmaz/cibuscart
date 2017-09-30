@@ -3,6 +3,7 @@ import time
 from flask import Flask, jsonify, request, render_template
 import sys
 import requests
+import logging
 
 es = Elasticsearch(host='es')
 

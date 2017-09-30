@@ -3,7 +3,8 @@ Configurations for flask application. These are global variables that the app wi
 lifetime
 """
 import os
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta
+
 from click import echo, style
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -38,7 +39,6 @@ class Config(object):
 
     # configure flask secret key
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'flask_app'
-    SERVER_NAME = os.environ.get("SERVER_NAME", "ARCO")
 
     # DATABASE CONFIGS
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
@@ -59,25 +59,6 @@ class Config(object):
     MAIL_SERVER = 'smtp.googlemail.com'
     MAIL_PORT = 465
     MAIL_USE_TLS = True
-
-    # gmail authentication
-    MAIL_SUBJECT_PREFIX = '[Arco]'
-    MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
-    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
-    MAIL_SENDER = 'Admin <arcoadmin@arco.com>'
-    MAIL_DEFAULT_SENDER = os.environ.get("MAIL_DEFAULT_SENDER")
-
-    # # credentials for external service accounts
-    # OAUTH_CREDENTIALS = {
-    #     "facebook": {
-    #         "id": os.environ["FACEBOOK_ID"],
-    #         "secret": os.environ["FACEBOOK_SECRET"]
-    #     },
-    #     "google": {
-    #         "id": os.environ["GOOGLE_ID"],
-    #         "secret": os.environ["GOOGLE_SECRET"]
-    #     }
-    # }
 
     @staticmethod
     def init_app(app):
@@ -111,30 +92,29 @@ class ProductionConfig(Config):
     """
 
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
-    ADMINS = [os.environ.get("ADMIN_EMAIL_1")]
 
-    @classmethod
-    def init_app(cls, app):
-        Config.init_app(app)
-
-        # email errors to the administrators
-        import logging
-        from logging.handlers import SMTPHandler
-        credentials = None
-        secure = None
-        if getattr(cls, 'MAIL_USERNAME', None) is not None:
-            credentials = (cls.MAIL_USERNAME, cls.MAIL_PASSWORD)
-            if getattr(cls, 'MAIL_USE_TLS', None):
-                secure = ()
-        mail_handler = SMTPHandler(
-            mailhost=(cls.MAIL_SERVER, cls.MAIL_PORT),
-            fromaddr=cls.MAIL_SENDER,
-            toaddrs=[cls.ADMINS],
-            subject=cls.MAIL_SUBJECT_PREFIX + ' Application Error',
-            credentials=credentials,
-            secure=secure)
-        mail_handler.setLevel(logging.ERROR)
-        app.logger.addHandler(mail_handler)
+    # @classmethod
+    # def init_app(cls, app):
+    # Config.init_app(app)
+    #
+    # # email errors to the administrators
+    # import logging
+    # from logging.handlers import SMTPHandler
+    # credentials = None
+    # secure = None
+    # if getattr(cls, 'MAIL_USERNAME', None) is not None:
+    #     credentials = (cls.MAIL_USERNAME, cls.MAIL_PASSWORD)
+    #     if getattr(cls, 'MAIL_USE_TLS', None):
+    #         secure = ()
+    # mail_handler = SMTPHandler(
+    #     mailhost=(cls.MAIL_SERVER, cls.MAIL_PORT),
+    #     fromaddr=cls.MAIL_SENDER,
+    #     toaddrs=[cls.ADMINS],
+    #     subject=cls.MAIL_SUBJECT_PREFIX + ' Application Error',
+    #     credentials=credentials,
+    #     secure=secure)
+    # mail_handler.setLevel(logging.ERROR)
+    # app.logger.addHandler(mail_handler)
 
 
 class HerokuConfig(ProductionConfig):
