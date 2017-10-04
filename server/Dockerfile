@@ -13,6 +13,6 @@ COPY . /app
 
 EXPOSE 5000
 
-ENTRYPOINT [ "python" ]
+# ENTRYPOINT [ "python" ]
 
-CMD [ "manage.py", "runserver" ]
+CMD [ "python", "manage.py", "runserver" ]

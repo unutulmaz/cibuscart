@@ -1,17 +1,18 @@
-version: "2"
+version: "3"
 services:
   es:
     image: elasticsearch:2.3
+
   server:
-    image: thelusina/foodtrucks-web
-    command: python manage.py runserver
+    image: thelusina/cibuscart-server
+    command: ./manage.py runserver
     ports:
       - "5000:5000"
     volumes:
-      - .:/code
+      - .:/app
 
   client:
-    image: thelusina/cibuscart
+    image: thelusina/cibuscart-client
     command: npm run start
     ports:
       - "3000:3000"
