@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import './styles/index.css';
 import Sidebar from "./components/Sidebar";
 import registerServiceWorker from './registerServiceWorker';
+import mapboxgl from "mapbox-gl";
 
 // setting up mapbox
 mapboxgl.accessToken = "pk.eyJ1IjoicHJha2hhciIsImEiOiJjaWZlbzQ1M2I3Nmt2cnhrbnlxcTQyN3VkIn0.uOaUAUqN2VS7dC7XKS0KkQ";
