@@ -9,7 +9,6 @@ es = Elasticsearch(host='es')
 logger = logging.getLogger("CibusCartLogger")
 
 
-
 class CibusFactory(object):
     """
     Factory class that will handle data logic in application.
