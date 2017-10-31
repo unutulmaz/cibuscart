@@ -1,10 +1,12 @@
 version: "3"
 services:
   es:
-    image: elasticsearch:2.3
+    restart: always
+    image: elasticsearch:5.6.3
 
   server:
-    command: ./manage.py runserver
+    restart: always
+    command: python manage.py runserver
     build: ./server
     ports:
       - "5000:5000"
@@ -16,6 +18,7 @@ services:
       - .:/app
 
   client:
+    restart: always
     build: ./client
     expose:
       - "3000"
