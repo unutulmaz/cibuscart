@@ -4,15 +4,23 @@ services:
     image: elasticsearch:2.3
 
   server:
-    image: thelusina/cibuscart-server
     command: ./manage.py runserver
+    build: ./server
     ports:
       - "5000:5000"
+    expose:
+      - "5000"
+    depends_on:
+      - es
     volumes:
       - .:/app
 
   client:
-    image: thelusina/cibuscart-client
+    build: ./client
+    expose:
+      - "3000"
     command: npm run start
+    depends_on:
+      - server
     ports:
       - "3000:3000"
